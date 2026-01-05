@@ -15,14 +15,16 @@ function loadFacilioAndCheckUser(callback) {
       const currentUser = window.app.getCurrentUser();
       // Check for null, undefined, or missing email
       if (!currentUser || !currentUser.email) {
-        window.location.href = 'https://app.facilio.com/maintenance/home/dashboard/list?version=revive';
+        // Redirect to Facilio login page if user is not present
+        window.location.href = 'https://app.facilio.com/identity/login';
       } else {
         console.log('Current User Email: ' + currentUser.email);
         callback();
       }
     } else {
       console.warn('Facilio SDK not loaded or app object missing.');
-      window.location.href = 'https://app.facilio.com/maintenance/home/dashboard/list?version=revive';
+      // Redirect to Facilio login page if SDK fails or user not found
+      window.location.href = 'https://app.facilio.com/identity/login';
     }
   };
   document.head.appendChild(script);
