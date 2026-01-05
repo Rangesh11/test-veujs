@@ -6,30 +6,41 @@ import router from './router' // Vue Router
 
 
 
-// Load Facilio SDK and initialize app logic
+
+// Dynamically load Facilio SDK, initialize, and log context/user/org, with event listeners
 const script = document.createElement('script');
 script.type = 'text/javascript';
 script.src = 'https://static.facilio.com/apps-sdk/latest/facilio_apps_sdk.min.js';
 script.onload = () => {
-  // Initialize the SDK as per docs
-  const app = window.FacilioAppSDK && window.FacilioAppSDK.init ? window.FacilioAppSDK.init() : null;
-  if (app) {
-    const currentUser = app.getCurrentUser();
-    if (!currentUser || !currentUser.email) {
+  if (window.FacilioAppSDK && window.FacilioAppSDK.init) {
+    var app = window.FacilioAppSDK.init();
+
+    // Listen for Facilio app events
+    app.on('app.loaded', (data) => {
+      console.log('Facilio app.loaded:', data);
+    });
+    app.on('app.destroyed', () => {
+      console.log('Facilio app destroyed');
+    });
+
+    // Get and log context, user, org
+    let currentRecord = app.getContext();
+    if (currentRecord && currentRecord.name) {
+      console.log('Record Name: ' + currentRecord.name);
+    }
+    let currentUser = app.getCurrentUser();
+    if (currentUser && currentUser.email) {
+      console.log('Current User Email: ' + currentUser.email);
+    } else {
       // Redirect to Facilio login page if user is not present
       window.location.href = 'https://app.facilio.com/identity/login';
       return;
     }
-    // Log context, user, and org info
-    const currentRecord = app.getContext();
-    if (currentRecord && currentRecord.name) {
-      console.log('Record Name: ' + currentRecord.name);
-    }
-    console.log('Current User Email: ' + currentUser.email);
-    const currentOrg = app.getCurrentOrg();
+    let currentOrg = app.getCurrentOrg();
     if (currentOrg && currentOrg.domain) {
       console.log('Current Org Domain: ' + currentOrg.domain);
     }
+
     // Mount Vue app
     createApp(App)
       .use(router)
