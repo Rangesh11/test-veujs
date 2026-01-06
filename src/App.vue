@@ -13,7 +13,9 @@ import AppLayout from './components/AppLayout.vue'
 export default {
   name: "App",
   created() {
+    console.log("Initializing Facilio App SDK...",FacilioAppSDK);
     window.app = FacilioAppSDK.init();
+    console.log("Facilio App SDK initialized:", window.app);
     window.app.on("app.loaded", (data) => {
       if (data?.currentUser?.id) {
         window.userId = Number(data.currentUser.id);
