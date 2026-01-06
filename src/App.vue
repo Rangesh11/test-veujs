@@ -9,6 +9,20 @@ import AppLayout from './components/AppLayout.vue'
   </AppLayout>
 </template>
 
+<script>
+export default {
+  name: "App",
+  created() {
+    window.app = FacilioAppSDK.init();
+    window.app.on("app.loaded", (data) => {
+      if (data?.currentUser?.id) {
+        window.userId = Number(data.currentUser.id);
+      }
+    });
+  },
+};
+</script>
+
 <style scoped>
 .page-placeholder {
   text-align: center;
