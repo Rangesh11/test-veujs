@@ -12,16 +12,24 @@ import AppLayout from './components/AppLayout.vue'
 <script>
 export default {
   name: "App",
-  created() {
-    console.log("Initializing Facilio App SDK...",FacilioAppSDK);
+created() {
+  if (window.FacilioAppSDK && window.FacilioAppSDK.init) {
     window.app = FacilioAppSDK.init();
-    console.log("Facilio App SDK initialized:", window.app);
+    if (!window.app) {
+      // Not inside Facilio, show message or redirect
+      window.location.href = 'https://app.facilio.com/identity/login';
+      return;
+    }
     window.app.on("app.loaded", (data) => {
       if (data?.currentUser?.id) {
         window.userId = Number(data.currentUser.id);
       }
     });
-  },
+  } else {
+    // Not inside Facilio, show message or redirect
+    window.location.href = 'https://app.facilio.com/identity/login';
+  }
+}
 };
 </script>
 
